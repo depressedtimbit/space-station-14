@@ -1,0 +1,108 @@
+﻿- type: entity
+  abstract: true
+  id: CasinoBase
+  description: An gambling machine.
+  name: arcade
+  parent: BaseComputer
+  components:
+    - type: ApcPowerReceiver
+      powerLoad: 350
+    - type: ExtensionCableReceiver
+    - type: PointLight
+      radius: 1.8
+      energy: 3.0
+      color: "#3db83b"
+      castShadows: false #SL lighting optimization
+    - type: LitOnPowered
+    - type: Sprite
+      sprite: Structures/Machines/arcade.rsi
+      layers:
+        - map: ["computerLayerBody"]
+          state: arcade
+        - map: ["computerLayerScreen"]
+          state: screen_invaders
+        - map: ["enum.WiresVisualLayers.MaintenancePanel"]
+          state: panel
+          visible: false
+    # Starlight Start
+    - type: GenericVisualizer  # Override to prevent edge connection sprites
+      visuals:
+        enum.EdgeConnectionVisuals.ConnectionMask:
+          computerLayerBody:
+            None: { state: arcade }
+    - type: EdgeConnection
+      connectionKey: other
+    # Starlight End
+    - type: Icon
+      sprite: Structures/Machines/arcade.rsi
+      state: arcade
+    - type: WiresPanel
+    - type: Wires
+      layoutId: Arcade
+      boardName: wires-board-name-arcade
+    - type: WiresVisuals
+    - type: TypingIndicator
+      proto: robot
+    - type: Speech
+      speechVerb: Robotic
+      speechSounds: Vending
+    - type: SpookySpeaker
+      messageSet: SpookySpeakerMessagesGeneric
+      speakChance: 0.2
+    - type: Anchorable
+    - type: Pullable
+    - type: StaticPrice
+      price: 300
+    - type: SpamEmitSoundRequirePower
+    - type: SpamEmitSound
+      minInterval: 30
+      maxInterval: 90
+      sound:
+        collection: ArcadeNoise
+        params:
+          volume: -8
+          maxDistance: 10
+          variation: 0.05
+
+- type: entity
+  id: SlotMachineCasino
+  name: Slot Machine
+  parent: CasinoBase
+  components:
+    - type: Sprite
+      sprite: Structures/Machines/arcade.rsi
+      layers:
+        - map: ["computerLayerBody"]
+          state: arcade
+        - map: ["computerLayerScreen"]
+          state: screen_spacevillain
+        - map: ["enum.WiresVisualLayers.MaintenancePanel"]
+          state: panel
+          visible: false
+    - type: PointLight
+      color: "#e3a136"
+    - type: SlotMachine
+    - type: WiresPanel
+    - type: Wires
+      layoutId: Arcade
+      boardName: wires-board-name-arcade
+    - type: ActivatableUI
+      key: enum.SlotMachineUiKey.Key
+    - type: ActivatableUIRequiresPower
+    - type: StationAiWhitelist
+    - type: UserInterface
+      interfaces:
+        enum.SlotMachineUiKey.Key:
+          type: SlotMachineBoundUserInterface
+        enum.WiresUiKey.Key:
+          type: WiresBoundUserInterface
+    - type: Computer
+      board: SpaceVillainArcadeComputerCircuitboard
+    - type: Vocalizer
+      minVocalizeInterval: 1m # Arcades are noisy
+      maxVocalizeInterval: 4m
+      hideChat: true
+    - type: DatasetVocalizer
+      dataset: SpaceVillainAds
+    - type: SpeakOnUIClosed
+      pack: SpaceVillainGoodbyes
